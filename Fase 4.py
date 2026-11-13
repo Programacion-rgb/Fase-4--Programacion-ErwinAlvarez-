@@ -2,18 +2,16 @@ from abc import ABC, abstractmethod
 from datetime import datetime
 import logging
 
-# ==========================================
-# 0. CONFIGURACIÓN DEL SISTEMA DE LOGS
-# ==========================================
+#  CONFIGURACIÓN DEL SISTEMA DE LOGS
+
 logging.basicConfig(
     filename='sistema_fj.log',
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s'
 )
 
-# ==========================================
-# 1. EXCEPCIONES PERSONALIZADAS
-# ==========================================
+# EXCEPCIONES PERSONALIZADAS
+
 class SoftwareFJError(Exception):
     """Excepción base para todos los errores del sistema Software FJ."""
     pass
@@ -31,9 +29,8 @@ class ReservaInvalidaError(SoftwareFJError):
     pass
 
 
-# ==========================================
-# 2. CLASE ABSTRACTA GENERAL (ENTIDAD)
-# ==========================================
+#  CLASE ABSTRACTA GENERAL (ENTIDAD)
+
 class EntidadSistema(ABC):
     """Clase abstracta que representa entidades generales dentro del sistema."""
     
@@ -43,9 +40,8 @@ class EntidadSistema(ABC):
         pass
 
 
-# ==========================================
-# 3. CLASE CLIENTE (Con encapsulación y validación)
-# ==========================================
+# CLASE CLIENTE (Con encapsulación y validación)
+
 class Cliente(EntidadSistema):
     """Representa a un cliente de Software FJ con validaciones estrictas."""
     
@@ -81,9 +77,8 @@ class Cliente(EntidadSistema):
         return f"Cliente: {self.__nombre} (Cédula: {self.__cedula}, Correo: {self.__correo})"
 
 
-# ==========================================
-# 4. CLASE ABSTRACTA SERVICIO Y ESPECIALIZACIONES
-# ==========================================
+# CLASE ABSTRACTA SERVICIO Y ESPECIALIZACIONES
+
 class Servicio(EntidadSistema, ABC):
     """Clase abstracta que define los servicios ofrecidos por Software FJ."""
     
@@ -178,9 +173,8 @@ class AsesoriaEspecializada(Servicio):
         return f"[Asesoría Especializada] {self.nombre_servicio} en {self.area_especialidad} - Base: ${self.costo_base}"
 
 
-# ==========================================
-# 5. CLASE RESERVA (Gestión integral y excepciones avanzadas)
-# ==========================================
+# CLASE RESERVA (Gestión integral y excepciones avanzadas)
+
 class Reserva:
     """Integra cliente, servicio, duración y estado con manejo robusto de excepciones."""
     
@@ -221,43 +215,42 @@ class Reserva:
             print(f"-> No se puede cancelar una reserva que se encuentra en estado '{self.estado}'.")
 
 
-# ==========================================
-# 6. SIMULACIÓN DE 10 OPERACIONES (Válidas e Inválidas)
-# ==========================================
+# SIMULACIÓN DE 10 OPERACIONES (Válidas e Inválidas)
+
 if __name__ == "__main__":
     print("==================================================")
     print("=== SISTEMA INTEGRAL SOFTWARE FJ - SIMULACIÓN ===")
     print("==================================================\n")
 
     operaciones_simuladas = [
-        # Op 1: Operación válida - Reserva de Sala con descuento
+        # 1 Operación válida - Reserva de Sala con descuento
         lambda: Reserva(Cliente("10123456", "Carlos Vives", "carlos@vives.com"), ReservaSala("Sala Ejecutiva", 60.0, 12), 4).confirmar_reserva(descuento_porcentaje=10),
         
-        # Op 2: Operación inválida - Cliente con cédula incorrecta
+        # 2 Operación inválida - Cliente con cédula incorrecta
         lambda: Reserva(Cliente("123", "Ana María", "ana@correo.com"), AlquilerEquipo("MacBook Pro", 40.0, "Laptop"), 2),
         
-        # Op 3: Operación válida - Alquiler de Equipo con seguro adicional
+        # 3 Operación válida - Alquiler de Equipo con seguro adicional
         lambda: Reserva(Cliente("10987654", "Lucía Marín", "lucia@marin.com"), AlquilerEquipo("Servidor Local", 120.0, "Servidor"), 3).confirmar_reserva(seguro_adicional=True),
         
-        # Op 4: Operación inválida - Duración negativa en sala
+        # 4 Operación inválida - Duración negativa en sala
         lambda: Reserva(Cliente("10223344", "Jorge Arango", "jorge@arango.com"), ReservaSala("Sala Creativa", 50.0, 8), -1).confirmar_reserva(),
         
-        # Op 5: Operación válida - Asesoría especializada nivel Senior
+        # 5 Operación válida - Asesoría especializada nivel Senior
         lambda: Reserva(Cliente("10556677", "Diana Rey", "diana@rey.com"), AsesoriaEspecializada("Arquitectura Cloud", 200.0, "Cloud Computing"), 2).confirmar_reserva(nivel_senior=True),
         
-        # Op 6: Operación inválida - Correo electrónico malformado
+        # 6 Operación inválida - Correo electrónico malformado
         lambda: Reserva(Cliente("10445566", "Pedro Picapiedra", "pedro-correo.com"), ReservaSala("Sala Básica", 30.0, 4), 2).confirmar_reserva(),
         
-        # Op 7: Operación válida con flujo de cancelación posterior
+        #  7 Operación válida con flujo de cancelación posterior
         lambda: (lambda r: (r.confirmar_reserva(incluir_impuesto=False), r.cancelar_reserva()))(Reserva(Cliente("10778899", "Sofía Vergara", "sofia@vergara.com"), ReservaSala("Sala VIP", 150.0, 20), 2)),
         
-        # Op 8: Operación inválida - Nombre de cliente demasiado corto
+        #  8 Operación inválida - Nombre de cliente demasiado corto
         lambda: Cliente("10889900", "Jo", "jo@correo.com"),
         
-        # Op 9: Operación válida - Asesoría estándar (Junior)
+        # 9 Operación válida - Asesoría estándar (Junior)
         lambda: Reserva(Cliente("10332211", "Andrés Cepeda", "andres@cepeda.com"), AsesoriaEspecializada("Seguridad Ofensiva", 100.0, "Ciberseguridad"), 3).confirmar_reserva(nivel_senior=False),
         
-        # Op 10: Operación inválida - Alquiler de equipo por 0 días
+        #10 Operación inválida - Alquiler de equipo por 0 días
         lambda: Reserva(Cliente("10990011", "Tatiana Navas", "tatiana@navas.com"), AlquilerEquipo("Impresora 3D", 25.0, "Impresora"), 0).confirmar_reserva()
     ]
 
